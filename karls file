@@ -1,1 +1,55 @@
-Importent stuff
+package Client;
+
+import java.io.IOException;
+import java.net.Socket;
+
+import java.util.Scanner;
+
+public class Chatclient {
+    private static final String host = "localhost";
+    private static  final int Port = 4444;
+    private Socket socket = null;
+    private String userName;
+    private String serverHost;
+    private Scanner userinput;
+    private int serverport;
+
+    public Chatclient(String userName, String host, int port) {
+        this.userName = userName;
+        this.serverHost = host;
+        this.serverport = port;
+    }
+    private void startClient(Scanner scan){
+    try{
+       Socket socket = new Socket(serverHost,serverport);
+        Thread.sleep(1000);
+        ServerThread serverThread = new ServerThread(socket,userName);
+        Thread serverAccessThread = new Thread(serverThread);
+        serverAccessThread.start();
+        while (serverAccessThread.isAlive()){
+            if(scan.hasNextLine()){
+                serverThread.addNextMessage(scan.nextLine());
+            }
+        }
+    } catch (IOException | InterruptedException e) {
+        System.err.println("Fatal connection error");
+        e.printStackTrace();
+    }
+    }
+
+    public static void main(String[] args)  {
+        String readName = null;
+
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Please input username");
+        while (readName == null || readName.trim().equals("")){
+            readName = scan.nextLine();
+            if(readName.trim().equals("")){
+                System.out.println("Invalid please try again!");
+            }
+        }
+        Chatclient chatclient = new Chatclient(readName,host,Port);
+        chatclient.startClient(scan);
+    }
+}
+
