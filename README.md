@@ -2,4 +2,4 @@
 
 Hej! 
 
-Detta är vårt gruppprojekt :)
+Detta är vårt grupprojekt :)
